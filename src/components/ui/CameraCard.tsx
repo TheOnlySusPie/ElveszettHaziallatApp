@@ -54,7 +54,7 @@ export default function CameraCard({ onImageChange }: CameraCardProps): React.JS
               <img src={capturedImage} alt='A készített állatfotó előnézete' className='aspect-video w-full object-cover' />
             ) : (
               <div className='flex aspect-video items-center justify-center px-6 text-center text-sm text-[var(--color-text-muted)]'>
-                Készíts fotót az állatról a natív kamera használatával.
+                Készíts fotót az állatról.
               </div>
             )}
           </div>
