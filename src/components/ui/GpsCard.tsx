@@ -2,8 +2,11 @@ import React from "react";
 import { Card, CardContent, CardTitle } from "./Card";
 import { AlertCircle, MapPin } from "lucide-react";
 
+interface GpsCardProps {
+    onLocationChange?: (location: { latitude: number; longitude: number } | null) => void;
+}
 
-export const GpsCard: React.FC = () => {
+export const GpsCard: React.FC<GpsCardProps> = ({ onLocationChange }) => {
     const [userLocation, setUserLocation] = React.useState<{ latitude: number; longitude: number } | null>(null);
     const [locationError, setLocationError] = React.useState<string | null>(null);
 
@@ -15,10 +18,12 @@ export const GpsCard: React.FC = () => {
 
         navigator.geolocation.getCurrentPosition(
             (position) => {
-                setUserLocation({
+                const location = {
                     latitude: position.coords.latitude,
                     longitude: position.coords.longitude,
-                });
+                };
+                setUserLocation(location);
+                onLocationChange?.(location);
             },
             (error) => {
                 setLocationError(error.message || "Nem sikerült lekérni a helyzetet.");

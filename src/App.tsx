@@ -3,17 +3,9 @@ import { ReloadPrompt } from './components/ReloadPrompt'
 import { Navbar, Button, Card, CardHeader, CardTitle, CardDescription, CardContent } from './components/ui'
 import { useNetworkStatus } from './hooks/useNetworkStatus'
 import { usePWAInstall } from './hooks/usePWAInstall'
-import {
-  Sparkles,
-  Zap,
-  Smartphone,
-  RefreshCw,
-  Plus,
-  Trash2,
-  CheckCircle,
-  FolderGit2,
-} from 'lucide-react'
+import { Send } from 'lucide-react'
 import { GpsCard } from './components/ui/GpsCard'
+import CameraCard from './components/ui/CameraCard'
 
 export function App(): React.JSX.Element {
   const isOnline = useNetworkStatus()
@@ -24,6 +16,12 @@ export function App(): React.JSX.Element {
     return saved ? JSON.parse(saved) : ['Offline note 1', 'PWA works without internet']
   })
   const [newNote, setNewNote] = useState('')
+  const [capturedImage, setCapturedImage] = useState<string | null>(null)
+  const [userLocation, setUserLocation] = useState<{ latitude: number; longitude: number } | null>(null)
+  const [submitMessage, setSubmitMessage] = useState<string | null>(null)
+
+  const canSubmit = Boolean(capturedImage && userLocation)
+
 
   const addNote = (e: React.FormEvent) => {
     e.preventDefault()
@@ -32,6 +30,16 @@ export function App(): React.JSX.Element {
     setItems(updated)
     localStorage.setItem('pwa_demo_notes', JSON.stringify(updated))
     setNewNote('')
+  }
+
+  const handleSubmit = () => {
+    if (!capturedImage || !userLocation) return
+
+    console.log('Elveszett háziállat bejelentés:', {
+      image: capturedImage,
+      location: userLocation,
+    })
+    setSubmitMessage('A bejelentés adatai készen állnak a beküldésre.')
   }
 
   return (
@@ -58,9 +66,22 @@ export function App(): React.JSX.Element {
             </span>
           </h1>
         </section>
+        <CameraCard onImageChange={setCapturedImage} />
+        <GpsCard onLocationChange={setUserLocation} />
 
-        {/* Gps Card */}
-        <GpsCard />
+        {canSubmit && (
+          <div className='flex flex-col items-center gap-3'>
+            <Button type='button' onClick={handleSubmit}>
+              <Send className='h-4 w-4' aria-hidden='true' />
+              Bejelentés beküldése
+            </Button>
+            {submitMessage && (
+              <p className='text-sm text-[var(--color-accent-alt)]' role='status'>
+                {submitMessage}
+              </p>
+            )}
+          </div>
+        )}
       </main>
 
       {/* Footer */}
