@@ -2,7 +2,8 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
 import { VitePWA } from 'vite-plugin-pwa'
-import basicSsl from "@vitejs/plugin-basic-ssl";
+import basicSsl from '@vitejs/plugin-basic-ssl'
+
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -46,8 +47,11 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
       },
       devOptions: {
-        enabled: true
+        enabled: false
       }
     })
-  ]
+  ],
+  optimizeDeps: {
+    exclude: ['maplibre-gl']
+  }
 })

@@ -1,35 +1,14 @@
-import React from "react"; 
+import React from "react";
 import { Card, CardContent, CardTitle } from "./Card";
 import { AlertCircle, MapPin } from "lucide-react";
 
 interface GpsCardProps {
-    onLocationChange?: (location: { latitude: number; longitude: number } | null) => void;
+    userLocation: { latitude: number; longitude: number } | null;
+    locationError: string | null;
+    onRetry: () => void;
 }
 
-export const GpsCard: React.FC<GpsCardProps> = ({ onLocationChange }) => {
-    const [userLocation, setUserLocation] = React.useState<{ latitude: number; longitude: number } | null>(null);
-    const [locationError, setLocationError] = React.useState<string | null>(null);
-
-    React.useEffect(() => {
-        if (!navigator.geolocation) {
-            setLocationError("A böngésző nem támogatja a helymeghatározást.");
-            return;
-        }
-
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const location = {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                };
-                setUserLocation(location);
-                onLocationChange?.(location);
-            },
-            (error) => {
-                setLocationError(error.message || "Nem sikerült lekérni a helyzetet.");
-            }
-        );
-    }, []);
+export const GpsCard: React.FC<GpsCardProps> = ({ userLocation, locationError, onRetry }) => {
 
     return(
        <section id="storage-demo" className="pt-2">
@@ -56,10 +35,19 @@ export const GpsCard: React.FC<GpsCardProps> = ({ onLocationChange }) => {
                         </CardContent>
 
                         {locationError && (
-                            <p className='mx-2 mt-4 flex items-start gap-2 text-sm text-[#A65335]' role='alert'>
-                                <AlertCircle className='mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]' aria-hidden='true' />
-                                <span>{locationError}</span>
-                            </p>
+                            <div className='mx-2 mt-4 flex items-start justify-between gap-3 text-sm text-[#A65335]' role='alert'>
+                                <p className='flex items-start gap-2'>
+                                    <AlertCircle className='mt-0.5 h-4 w-4 shrink-0 text-[var(--color-accent)]' aria-hidden='true' />
+                                    <span>{locationError}</span>
+                                </p>
+                                <button
+                                    type='button'
+                                    onClick={onRetry}
+                                    className='shrink-0 font-semibold text-[var(--color-primary)] underline underline-offset-2'
+                                >
+                                    Újrapróbálás
+                                </button>
+                            </div>
                         )}
           </Card>
         </section>
